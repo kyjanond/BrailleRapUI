@@ -234,59 +234,6 @@ const buildoptimizedgcode = function ()
   return (codestr)
 }
 
-
-// draw SVG
-const dotAt = function (
-  point:IPosition2D, 
-  gcode:IGCode, 
-  lastDot:boolean
-) {
-  const px = braille.invertX ? -point.x : braille.paperWidth - point.x
-  const py = braille.invertY ? -point.y : braille.paperHeight - point.y
-  gcode.code += gcodeMoveToCached(braille.mirrorX ? -px : px, braille.mirrorY ? -py : py)
-  //gcodeGraphDotCached(braille.mirrorX ? -px : px, braille.mirrorY ? -py : py)
-  // move printer head
-  gcode.code += gcodeMoveTo()
-  if(braille.svgDots || lastDot) {
-    gcode.code += gcodeMoveTo()
-  }
-}
-
-const itemMustBeDrawn = function (item:paper.Shape | paper.Path)  {
-  return (item.strokeWidth > 0 && item.strokeColor != null) || item.fillColor != null
-}
-
-const plotItem = function (item:paper.Shape, gcode:IGCode, bounds:paper.Rectangle)  {
-  if(!item.visible) {
-    return
-  }
-
-  if(item.className == 'Shape') {
-    const shape = item
-    if(itemMustBeDrawn(shape)) {
-      const path = shape.toPath(true)
-      item.parent.addChildren(item.children)
-      item.remove()
-      item = path
-    }
-  }
-  if((item.className == 'Path' ||
-			item.className == 'CompoundPath') && item.strokeWidth > 0) {
-    const path = item
-    if(path.segments != null) {
-      for(let i=0 ; i < path.length ; i  += braille.svgStep) {
-        dotAt(path.getPointAt(i), gcode, i + braille.svgStep >= path.length)
-      }
-    }
-  }
-  if(item.children == null) {
-    return
-  }
-  for(const child of item.children) {
-    plotItem(child, gcode, bounds)
-  }
-}
-
 // gcode sort by line
 const gcodesortzigzag = function (positions:IPosition2D[])
 {
@@ -336,18 +283,6 @@ const gcodesortzigzag = function (positions:IPosition2D[])
   }
 
   return (sorted)
-}
-
-// Generates code
-const svgToGCode = function(svg:paper.Shape, gcode:IGCode) {
-  //svg.scaling = mmPerPixels
-  plotItem(svg, gcode, svg.bounds)
-  //svg.scaling =1;// mmPerPixels
-  if (GCODEsvgdotposition != null && GCODEsvgdotposition.length > 0)
-    GCODEsvgdotposition.sort (function (a,b) {
-      if (a.y == b.y) return (a.x - b.x)
-      return (a.y - b.y)
-    })
 }
 
 export interface ICharIndices {
@@ -448,8 +383,6 @@ export function brailleToGCode(textToWrite:string,settings:IBrailleSettings) {
   braille.ejectPaper = settings.ejectPaper
 
   GCODEdotposition.length = 0
-  let gcode = gcodeHome()
-  gcode += gcodeSetSpeed(braille.speed)
 
   const is8dot = brailleTable.type === '8dots'
   const indicesArray = textToIndices(textToWrite,brailleTable,braille)
@@ -470,7 +403,7 @@ export function brailleToGCode(textToWrite:string,settings:IBrailleSettings) {
     }
 
     // add gcode
-    gcode += gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
+    gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
 
     // Iterate through all indices
     for(let y = 0 ; y < (is8dot ? 4 : 3) ; y++) {
@@ -492,95 +425,19 @@ export function brailleToGCode(textToWrite:string,settings:IBrailleSettings) {
               gy += braille.paperHeight
             }
 
-            gcode += gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
+            gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
             //GCODEdotposition.push ({x:(braille.mirrorX ? -gx : gx, y:braille.mirrorY ? -gy : gy)});
           }
 
           // print dot at position
-          gcode += gcodePrintDotCached ()
+          gcodePrintDotCached ()
 
         }
       }
     }
-
-    // Print the SVG
-    const svg:paper.Shape | null = null
-    if(svg != null) {
-      const gcodeObject:IGCode = {
-        code: gcode
-      }
-
-      //svg.scaling = 1 / mmPerPixels
-      svgToGCode(svg, gcodeObject)
-      svg.scaling = 1//mmPerPixels;
-
-      gcode = gcodeObject.code
-    }
   }
 
-  if(braille.goToZero) {
-    gcode += gcodeMoveTo(0, 0, 0)
-  }
-
-  // let printBounds = textGroup.bounds
-  // if(svg != null) {
-  //   printBounds = printBounds.unite(svg.bounds)
-  // }
-  // printBounds = printBounds.scale(1 / mmPerPixels)
-  // print dot position
-  let pstr = `${GCODEdotposition.length} \r\n` 
-  for (let d = 0; d < GCODEdotposition.length; d++)
-  {
-    pstr += '(' + d + ')' + GCODEdotposition[d].x + ' ' + GCODEdotposition[d].y + '\r\n'
-  }
   const sortedgcode = buildoptimizedgcode()
   return sortedgcode
-}
-
-const importSVG = (event)=> {
-  GCODEsvgdotposition.length = 0
-  svgButton.name('Clear SVG')
-  svg = paper.project.importSVG(event.target.result)
-  svg.strokeScaling = false
-  svg.pivot = svg.bounds.topLeft
-  const mmPerPixels =  paper.view.bounds.width / braille.paperWidth
-
-  //svg.scaling = mmPerPixels;
-  svg.scaling = 1
-  brailleToGCode()
-  //svg.scaling = 1.0;
-  svg.sendToBack()
-}
-
-const handleFileSelect = (event) => {
-  const files = event.dataTransfer != null ? event.dataTransfer.files : event.target.files
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files.item(i)
-
-    const imageType = /^image\//
-
-    if (!imageType.test(file.type)) {
-      continue
-    }
-
-    const reader = new FileReader()
-    reader.onload = (event)=> importSVG(event)
-    reader.readAsText(file)
-  }
-}
-
-const updateSVGPositionX = (value) => {
-  const mmPerPixels =  paper.view.bounds.width / braille.paperWidth
-  svg.position.x = value// * mmPerPixels;
-  console.log (svg.position.x)
-  brailleToGCode()
-}
-
-const updateSVGPositionY = (value) => {
-  const mmPerPixels =  paper.view.bounds.width / braille.paperWidth
-  svg.position.y = value// * mmPerPixels;
-  console.log (svg.position.y)
-  brailleToGCode()
 }
 
