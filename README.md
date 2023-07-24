@@ -8,5 +8,5 @@
 ### install and run
 ```
 yarn install
-vite dev
+yarn dev
 ```
