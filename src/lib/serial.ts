@@ -14,6 +14,10 @@ const filters = [
 
 const isSerial = 'serial' in navigator
 
+export const isSerialCompatible = ()=>{
+  return 'serial' in navigator
+}
+
 const connectSerial = async (baud:number)=>{
   try{
     const port = await navigator.serial.requestPort({filters})
@@ -42,7 +46,7 @@ export const sendSerial = async (
     return
   }
 
-  if (!isSerial){
+  if (!isSerialCompatible()){
     console.warn('Serial is not available')
     return
   }

@@ -6,7 +6,7 @@ import Controls from '../common/controls/Controls'
 import { brailleToGCode } from '../lib/script'
 import BrailleCanvas from '../common/braille-canvas/BrailleCanvas'
 import { gcodeParse } from '../lib/brailleDraw'
-import { ISerialState, sendSerial } from '../lib/serial'
+import { ISerialState, sendSerial, isSerialCompatible } from '../lib/serial'
 import { Grid } from '@mui/material'
 import UiAlert, { IUiAlertProps } from '../common/ui-alert/UiAlert'
 import './brailleUi.scss'
@@ -58,7 +58,17 @@ const BrailleUI = ()=>{
     ]
   }
   const handleSendClicked = ()=>{
-    if (isPrinting){
+    if (!isSerialCompatible()){
+      const alertProps:IUiAlertProps = {
+        title: 'ERROR',
+        message: 'Your browser is unfortunatelly not supported. Try new version of MS Edge or Google Chrome.',
+        show: true,
+        handleClose: ()=>{setAlert({show:false})}
+      }
+      setAlert(alertProps)
+      return
+    }
+    else if (isPrinting){
       const alertProps:IUiAlertProps = {
         title: 'WARNING',
         message: 'Already printing. Wait!',
