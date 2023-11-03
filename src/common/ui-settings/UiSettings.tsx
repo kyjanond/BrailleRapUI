@@ -46,7 +46,7 @@ const UiSettings = (props:IUiSettings)=>{
     <Dialog open={props.show}>
       <DialogTitle>Subscribe</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText sx={{marginBottom:'16px'}}>
             Set print and braille settings.
         </DialogContentText>
         <FormControl fullWidth>
