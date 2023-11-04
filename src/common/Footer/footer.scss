@@ -1,0 +1,21 @@
+.footer {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: none;
+  padding: 4px;
+  z-index: 1;
+  &--hidden {
+    visibility: hidden;
+  }
+  &__content {
+    font-size:x-small;
+    > a {
+      color: black;
+    }
+  }
+  &__hidden-content{
+    display:none;
+  }
+}

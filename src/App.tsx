@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 //fonts
 import '@fontsource/jua'
 import '@fontsource/roboto'
+import Footer from './common/Footer/Footer'
 
 const theme = createTheme({
   palette: {
@@ -30,6 +31,7 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <BrailleUI/>
+        <Footer visible={true}/>
       </ThemeProvider>
     </>
   )
