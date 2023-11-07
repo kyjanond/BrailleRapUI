@@ -14,30 +14,34 @@ interface IUiHeader {
 const UiFooter = (props:IUiHeader)=>{
   return(
     <div className={props.className}>
-      <img
-        className='br-ui-footer__logo'
-        src={`${LogoAlu}?w=50&h=50&fit=crop&auto=format`}
-        srcSet={`${LogoAlu}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
-        alt='logo alu'
-        loading="lazy"
-      />
-      <img
-        className='br-ui-footer__logo'
-        src={`${LogoFablabCST}?w=50&h=50&fit=crop&auto=format`}
-        srcSet={`${LogoFablabCST}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
-        alt='logo fbalab cst'
-        loading="lazy"
-      />
-      <img
-        className='br-ui-footer__logo'
-        src={`${LogoCST}?w=50&h=50&fit=crop&auto=format`}
-        srcSet={`${LogoCST}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
-        alt='logo cst'
-        loading="lazy"
-      />
-      <Typography>
-        Made by passionate people in Bhutan with love ♡
-      </Typography>
+      <div className='br-ui-footer__logo-wrapper'>
+        <img
+          className='br-ui-footer__logo'
+          src={`${LogoAlu}?w=50&h=50&fit=crop&auto=format`}
+          srcSet={`${LogoAlu}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
+          alt='logo alu'
+          loading="lazy"
+        />
+        <img
+          className='br-ui-footer__logo'
+          src={`${LogoFablabCST}?w=50&h=50&fit=crop&auto=format`}
+          srcSet={`${LogoFablabCST}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
+          alt='logo fbalab cst'
+          loading="lazy"
+        />
+        <img
+          className='br-ui-footer__logo'
+          src={`${LogoCST}?w=50&h=50&fit=crop&auto=format`}
+          srcSet={`${LogoCST}?w=50&h=50&fit=crop&auto=format&dpr=2 2x`}
+          alt='logo cst'
+          loading="lazy"
+        />
+      </div>
+      <div className='br-ui-footer__text-wrapper'>
+        <Typography>
+          Made by passionate people in Bhutan with love ♡
+        </Typography>
+      </div>
     </div>
   )
 }

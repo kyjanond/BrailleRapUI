@@ -7,7 +7,7 @@ import { compairCharAgaistDevnagriNumber, getPrefixforSpecialcharacter } from '.
 import { IBrailleSettings } from '../common/ui-settings/UiSettings'
 
 
-const braille = {
+export const brailleConfig = {
   marginWidth: 3,
   marginHeight: 5,
   paperWidth: 175,
@@ -72,7 +72,7 @@ const gcodeMotorOff = function()
 const gcodeHome = function ()
 {
   let str = 'G28 X;\r\n'
-  if (braille.homeY){
+  if (brailleConfig.homeY){
     str += 'G28 Y;\r\n'
   }
   
@@ -126,9 +126,9 @@ const gcodeMoveToCached = function (X?:number,Y?:number,Z?:number)
 
 
 const gcodeprintdot = function () {
-  let s = braille.GCODEdown + ';\r\n'
-  s += braille.GCODEup + ';\r\n'
-  s += braille.GCODEafterpause + ';\r\n'
+  let s = brailleConfig.GCODEdown + ';\r\n'
+  s += brailleConfig.GCODEup + ';\r\n'
+  s += brailleConfig.GCODEafterpause + ';\r\n'
 
   return (s)
 }
@@ -151,8 +151,8 @@ const gcodeGraphDotCached = function ()
 
 const buildoptimizedgcode = function ()
 {
-  const gridsizex = Math.floor(braille.paperWidth / braille.svgStep)
-  const gridsizey = Math.floor (braille.paperHeight / braille.svgStep)
+  const gridsizex = Math.floor(brailleConfig.paperWidth / brailleConfig.svgStep)
+  const gridsizey = Math.floor (brailleConfig.paperHeight / brailleConfig.svgStep)
 
 
 
@@ -166,10 +166,10 @@ const buildoptimizedgcode = function ()
 
 
 
-  codestr += gcodeSetSpeed(braille.speed)
+  codestr += gcodeSetSpeed(brailleConfig.speed)
 
 
-  if(braille.goToZero) {
+  if(brailleConfig.goToZero) {
     codestr += gcodeMoveTo(0, 0, 0)
   }
 
@@ -183,28 +183,28 @@ const buildoptimizedgcode = function ()
 
   console.log(`sorted positions: ${sortedpositions.length}`)
 
-  if (braille.usedotgrid == true)
+  if (brailleConfig.usedotgrid == true)
     console.log ('filtering dot neighbor')
 
   for (let i = 0; i < sortedpositions.length; i++)
   {
     codestr += gcodeMoveTo(sortedpositions[i].x, sortedpositions[i].y)
     codestr += gcodeprintdot ()
-    dotgrid[Math.floor(sortedpositions[i].x / braille.svgStep)][Math.floor(sortedpositions[i].y / braille.svgStep)] = 1
+    dotgrid[Math.floor(sortedpositions[i].x / brailleConfig.svgStep)][Math.floor(sortedpositions[i].y / brailleConfig.svgStep)] = 1
   }
 
   // print svg
   for (let i=0; i < GCODEsvgdotposition.length; i++)
   {
-    const gx = Math.floor (GCODEsvgdotposition[i].x / braille.svgStep)
-    const gy = Math.floor (GCODEsvgdotposition[i].y / braille.svgStep)
+    const gx = Math.floor (GCODEsvgdotposition[i].x / brailleConfig.svgStep)
+    const gy = Math.floor (GCODEsvgdotposition[i].y / brailleConfig.svgStep)
 
     if (gx < 0 || gx >= gridsizex)
       continue
     if (gy < 0 || gy >= gridsizey)
       continue
 
-    if (braille.usedotgrid  == true)
+    if (brailleConfig.usedotgrid  == true)
     {
       if (dotgrid[gx][gy] == 0)
       {
@@ -224,8 +224,8 @@ const buildoptimizedgcode = function ()
     }
   }
 
-  if (braille.ejectPaper){
-    codestr += gcodeMoveTo (0,braille.paperHeight)
+  if (brailleConfig.ejectPaper){
+    codestr += gcodeMoveTo (0,brailleConfig.paperHeight)
   } else {
     codestr += gcodeMoveTo (0,0)
   }
@@ -294,7 +294,7 @@ export interface ICharIndices {
 const textToIndices = (
   _text: string,
   _brailleTable:IBrailleTable, 
-  _brailleSettings: typeof braille
+  _brailleSettings: typeof brailleConfig
 )=>{
   const latinToBrailleMap = new Map(Object.entries(_brailleTable.latinToBraille))
   const indiceArray:ICharIndices[] = []
@@ -378,54 +378,54 @@ export function brailleToGCode(textToWrite:string,settings:IBrailleSettings) {
     return
   }
   const brailleTable:IBrailleTable = brailleTableMap.get(settings.tableName) as IBrailleTable
-  braille.speed = settings.velocity
-  braille.homeY = settings.homeY
-  braille.ejectPaper = settings.ejectPaper
+  brailleConfig.speed = settings.velocity
+  brailleConfig.homeY = settings.homeY
+  brailleConfig.ejectPaper = settings.ejectPaper
 
   GCODEdotposition.length = 0
 
   const is8dot = brailleTable.type === '8dots'
-  const indicesArray = textToIndices(textToWrite,brailleTable,braille)
+  const indicesArray = textToIndices(textToWrite,brailleTable,brailleConfig)
   for(let i = 0 ; i < indicesArray.length ; i++) {
     const indices = indicesArray[i]
     const currentX = indices.xAct
     const currentY = indices.yAct
 
     // compute corresponding printer coordinates
-    let gx = braille.invertX ? -currentX : braille.paperWidth - currentX
+    let gx = brailleConfig.invertX ? -currentX : brailleConfig.paperWidth - currentX
     let gy = -currentY				// canvas y axis goes downward, printers goes upward
 
-    if(braille.delta) { 				// delta printers have their origin in the center of the sheet
-      gx -= braille.paperWidth / 2
-      gy += braille.paperHeight / 2
-    } else if(!braille.invertY) {
-      gy += braille.paperHeight
+    if(brailleConfig.delta) { 				// delta printers have their origin in the center of the sheet
+      gx -= brailleConfig.paperWidth / 2
+      gy += brailleConfig.paperHeight / 2
+    } else if(!brailleConfig.invertY) {
+      gy += brailleConfig.paperHeight
     }
 
     // add gcode
-    gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
+    gcodeMoveToCached(brailleConfig.mirrorX ? -gx : gx, brailleConfig.mirrorY ? -gy : gy,0)
 
     // Iterate through all indices
     for(let y = 0 ; y < (is8dot ? 4 : 3) ; y++) {
       for(let x = 0 ; x < 2 ; x++) {
         if(indices.indices.indexOf(brailleTable.dotMap[x][y]) != -1) { 			// if index exists in current char: draw the dot
-          const px = currentX + x * braille.letterWidth
-          const py = currentY + y * braille.letterWidth
+          const px = currentX + x * brailleConfig.letterWidth
+          const py = currentY + y * brailleConfig.letterWidth
 
           // Compute corresponding gcode position
           if(x > 0 || y > 0) {
 
-            gx = braille.invertX ? - px : braille.paperWidth - px
+            gx = brailleConfig.invertX ? - px : brailleConfig.paperWidth - px
             gy = -py						// canvas y axis goes downward, printers goes upward
 
-            if(braille.delta) { 			// delta printers have their origin in the center of the sheet
-              gx -= braille.paperWidth / 2
-              gy += braille.paperHeight / 2
-            } else if(!braille.invertY){
-              gy += braille.paperHeight
+            if(brailleConfig.delta) { 			// delta printers have their origin in the center of the sheet
+              gx -= brailleConfig.paperWidth / 2
+              gy += brailleConfig.paperHeight / 2
+            } else if(!brailleConfig.invertY){
+              gy += brailleConfig.paperHeight
             }
 
-            gcodeMoveToCached(braille.mirrorX ? -gx : gx, braille.mirrorY ? -gy : gy,0)
+            gcodeMoveToCached(brailleConfig.mirrorX ? -gx : gx, brailleConfig.mirrorY ? -gy : gy,0)
             //GCODEdotposition.push ({x:(braille.mirrorX ? -gx : gx, y:braille.mirrorY ? -gy : gy)});
           }
 

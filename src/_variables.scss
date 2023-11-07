@@ -1,3 +1,18 @@
 $color-main: #0d2d52;
 
 $font-family-main: 'Roboto', sans-serif;
+
+// Small tablets and large smartphones (landscape view)
+$screen-xs-min: 0px;
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 600px;
+
+// Small tablets (portrait view)
+$screen-md-min: 900px;
+
+// Tablets and small desktops
+$screen-lg-min: 1200px;
+
+// Large tablets and desktops
+$screen-xl-min: 1536px;

@@ -132,41 +132,33 @@ const BrailleUI = ()=>{
   const handleDebugClicked = ()=>{
   }
   return(
-    <div className='br-braille-ui'>
-      <UiHeader className='br-ui-header'/>
-      <Grid 
-        container 
-        spacing={2} 
-        className='br-ui-main'
-        justifyContent="center"
-        alignItems="stretch"
+    <div>
+      <div
+        className='br-ui'
       >
-        <Grid item xs={6} className='br-text-input'>
-          <TextInput className='br-text-input__content' onChange={(handleTextChanged)}/>
-        </Grid>
-        <Grid item xs={6} className='br-braille-canvas'>
-          <BrailleCanvas className='br-braille-canvas__content' dots={paths}/>
-        </Grid>
-        <Grid item xs={12} className='br-braille-controls'>
+        <UiHeader className='br-ui-header'/>
+        <div className='br-ui-input'>
+          <TextInput className='br-ui-input__text' onChange={(handleTextChanged)}/>
+          <BrailleCanvas className='br-ui-input__braille-canvas' dots={paths}/>
+        </div>
+        <div className='br-ui-controls'>
           <Controls 
             canPrint={gcode.length > 0}
-            className='br-braille-controls__content'
+            className='br-ui-controls__btns'
             onSendClicked={handleSendClicked} 
             onGenerateClicked={handleGenerateClicked} 
             onDebugClicked={handleDebugClicked}
             onSettingsClicked={handleSettingsClicked}
           />
-        </Grid>
-        <Grid item xs={12} className='br-braille-print-state'>
-          <PrintState className='br-braille-print-state__content' state={printState}/>
-        </Grid>
-      </Grid>
+          <PrintState className='br-ui-controls__print-state' state={printState}/>
+        </div>
+        <UiFooter className='br-ui-footer'/>
+      </div>
       <UiSettings 
         show={showSettings}
         handleClose={handleSettingsClose} 
         settings={brailleSettings}      
       />
-      <UiFooter className='br-ui-footer'/>
       <UiAlert {...alert}/>
     </div>
   )
