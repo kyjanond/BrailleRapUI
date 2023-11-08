@@ -18,13 +18,11 @@ const BrailleCanvas = (props:IBrailleCanvasProps)=>{
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [pxMmRatio, setPxMmRatio] = useState(5);
-  const [pyMmRatio, setPyMmRatio] = useState(5);
 
   const handleWindowResize = ()=>{
     const width = ref.current?.clientWidth ?? 1
     const height = ref.current?.clientHeight ?? 1
     setPxMmRatio(width/A4width)
-    setPyMmRatio(height/A4width)
     setWidth(width);
     setHeight(height);
   }
@@ -40,14 +38,12 @@ const BrailleCanvas = (props:IBrailleCanvasProps)=>{
   }, []);
 
   useEffect(()=>{
-    console.debug(height,width,pxMmRatio)
     if (!paper.project){
       return
     }
     paper.project.clear()
     paper.view.viewSize.width = width
     paper.view.viewSize.height = height
-    //const pyMmRatio = paper.view.viewSize.height/paper.view.viewSize.width
     props.dots.forEach(dot => {
       const _pt = new paper.Point(
         dot.x * pxMmRatio, 

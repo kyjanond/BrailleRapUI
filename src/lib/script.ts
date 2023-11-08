@@ -321,7 +321,6 @@ const textToIndices = (
       }
       continue
     }
-    //console.debug(brailleTable.latinToBraille)
     // Check if char exists in map
     if(!latinToBrailleMap.has(char.toLowerCase())) {
       console.log('Character ' + char + ' was not translated in braille.')

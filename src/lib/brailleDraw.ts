@@ -11,13 +11,10 @@ export const gcodeParse = (gcode:string)=>{
   }
   gcodeSplit.forEach(line => {
     const matches = moveRe.exec(line)
-    //console.debug(line)
     if(matches?.length === 3){
       cursor.x = parseFloat(matches[1])
       cursor.y = parseFloat(matches[2])
-      //console.debug('move',cursor)
     } else if (line.startsWith('M3 S1')){
-      //console.debug('dot',cursor)
       const dot = {x:cursor.x,y:cursor.y}
       dotArray.push(dot)
     }
