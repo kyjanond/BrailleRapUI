@@ -1,20 +1,19 @@
 //@ts-ignore: : needs React
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState } from 'react'
-import TextInput from '../common/text-input/TextInput'
-import Controls from '../common/controls/Controls'
-import { brailleToGCode } from '../lib/script'
-import BrailleCanvas from '../common/braille-canvas/BrailleCanvas'
+import TextInput from '../components/text-input/TextInput'
+import Controls from '../components/controls/Controls'
+import { IPosition2D, brailleToGCode } from '../lib/script'
+import BrailleCanvas from '../components/braille-canvas/BrailleCanvas'
 import { gcodeParse } from '../lib/brailleDraw'
 import { ISerialState, sendSerial, isSerialCompatible } from '../lib/serial'
-import { Grid } from '@mui/material'
-import UiAlert, { IUiAlertProps } from '../common/ui-alert/UiAlert'
+import UiAlert, { IUiAlertProps } from '../components/ui-alert/UiAlert'
 import './brailleUi.scss'
-import UiHeader from '../common/ui-header/UiHeader'
-import UiFooter from '../common/ui-footer/UiFooter'
-import UiSettings, { IBrailleSettings } from '../common/ui-settings/UiSettings'
+import UiHeader from '../components/ui-header/UiHeader'
+import UiFooter from '../components/ui-footer/UiFooter'
+import UiSettings, { IBrailleSettings } from '../components/ui-settings/UiSettings'
 import { brailleTableOptions } from '../assets/language-tables/brailleTable'
-import PrintState from '../common/print-state/PrintState'
+import PrintState from '../components/print-state/PrintState'
 
 let isPrinting = false
 
@@ -35,7 +34,7 @@ const BrailleUI = ()=>{
   const [text,setText] = useState('')
   const [showSettings,setShowSettings] = useState(false)
   const [gcode,setGcode] = useState('')
-  const [paths,setPaths] = useState([] as any[])
+  const [paths,setPaths] = useState([] as IPosition2D[])
   const [printState,setPrintState] = useState(defualtSerialState)
   const [alert,setAlert] = useState({
     title: 'ERROR',

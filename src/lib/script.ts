@@ -4,7 +4,7 @@
 import * as paper from 'paper'
 import { IBrailleTable, brailleTableMap } from '../assets/language-tables/brailleTable'
 import { compairCharAgaistDevnagriNumber, getPrefixforSpecialcharacter } from './charUtils'
-import { IBrailleSettings } from '../common/ui-settings/UiSettings'
+import { IBrailleSettings } from '../components/ui-settings/UiSettings'
 
 
 export const brailleConfig = {

@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 //fonts
 import '@fontsource/jua'
 import '@fontsource/roboto'
-import Footer from './common/Footer/Footer'
+import Footer from './components/footer/Footer'
 
 const theme = createTheme({
   palette: {
