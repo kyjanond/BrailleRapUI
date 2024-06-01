@@ -2,40 +2,39 @@
 // Extra small devices
 @mixin xs {
   @media (min-width: #{v.$screen-xs-min}) {
-      @content;
+    @content;
   }
 }
-
 
 // Small devices
 @mixin sm {
   @media (min-width: #{v.$screen-sm-min}) {
-      @content;
+    @content;
   }
 }
 
 // Medium devices
 @mixin md {
   @media (min-width: #{v.$screen-md-min}) {
-      @content;
+    @content;
   }
 }
 
 // Large devices
 @mixin lg {
   @media (min-width: #{v.$screen-lg-min}) {
-      @content;
+    @content;
   }
 }
 
 // Extra large devices
 @mixin xl {
   @media (min-width: #{v.$screen-xl-min}) {
-      @content;
+    @content;
   }
 }
 
-.br-ui{
+.br-ui {
   display: flex;
   flex-direction: column;
   width: 100vw;
@@ -44,7 +43,13 @@
   gap: 8px;
 }
 
-.br-ui-input{
+.br-ui-settings {
+  &__drop-down {
+    margin-bottom: 16px !important;
+  }
+}
+
+.br-ui-input {
   @include xs {
     flex-direction: column !important;
   }
@@ -57,16 +62,16 @@
   height: 100%;
   flex: 1 1;
   overflow: hidden;
-  &__text{
+  &__text {
     //width: 100%;
     height: 100%;
     flex: 1 1;
-    >.MuiInputBase-root{
+    > .MuiInputBase-root {
       //width: 100%;
       height: 100%;
     }
   }
-  &__braille-canvas{
+  &__braille-canvas {
     @include xs {
       height: 1%;
     }
@@ -74,23 +79,23 @@
       height: 100%;
     }
     flex: 1 1;
-    >#braille-canvas{
-      width: 100%;
-      height: 100%;
+    > #braille-canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
   }
 }
 
-.br-ui-header{
+.br-ui-header {
   @include xs {
     height: 64px;
-    >.MuiTypography-root{
+    > .MuiTypography-root {
       font-size: 1.5rem;
     }
   }
   @include md {
     height: 128px;
-    >.MuiTypography-root{
+    > .MuiTypography-root {
       font-size: 3rem !important;
     }
   }
@@ -100,47 +105,47 @@
   padding: 16px;
   justify-content: flex-start;
   align-items: center;
-  >.br-ui-header__logo{
+  > .br-ui-header__logo {
     height: 100%;
     object-fit: contain;
   }
-  >.MuiTypography-root{
+  > .MuiTypography-root {
     color: v.$color-main;
   }
 }
 
-.br-ui-footer{
+.br-ui-footer {
   @include xs {
     height: 48px;
-    >.br-ui-footer__logo-wrapper{
-      >.br-ui-footer__logo{
+    > .br-ui-footer__logo-wrapper {
+      > .br-ui-footer__logo {
         height: 32px;
         border-radius: 16px;
       }
     }
-    >.br-ui-footer__text-wrapper {
-      >.MuiTypography-root{
+    > .br-ui-footer__text-wrapper {
+      > .MuiTypography-root {
         font-size: x-small;
       }
     }
   }
   @include md {
     height: 80px;
-    >.br-ui-footer__logo-wrapper{
-      >.br-ui-footer__logo{
+    > .br-ui-footer__logo-wrapper {
+      > .br-ui-footer__logo {
         height: 64px;
         border-radius: 32px;
       }
     }
-    >.br-ui-footer__text-wrapper {
-      >.MuiTypography-root{
+    > .br-ui-footer__text-wrapper {
+      > .MuiTypography-root {
         font-size: smaller;
       }
     }
   }
   padding: 24px;
   margin-bottom: 16px;
-  >.br-ui-footer__logo-wrapper {
+  > .br-ui-footer__logo-wrapper {
     margin-bottom: 8px;
     max-width: 100%;
     display: flex;
@@ -150,23 +155,23 @@
     justify-content: flex-start;
     align-items: flex-end;
   }
-  >.br-ui-footer__text-wrapper {
-    >.MuiTypography-root{
+  > .br-ui-footer__text-wrapper {
+    > .MuiTypography-root {
       color: v.$color-main;
     }
   }
 }
 
-.br-ui-controls{
+.br-ui-controls {
   padding: 16px;
-  &__btns{
+  &__btns {
     display: flex;
     flex-direction: row;
     gap: 16px;
     margin-bottom: 8px;
   }
-  &__print-state{
-    >.MuiTypography-root{
+  &__print-state {
+    > .MuiTypography-root {
       color: v.$color-main;
       font-size: small;
     }

@@ -12,15 +12,14 @@ const filters = [
   }
 ]
 
-const isSerial = 'serial' in navigator
-
 export const isSerialCompatible = ()=>{
   return 'serial' in navigator
 }
 
-const connectSerial = async (baud:number)=>{
+const connectSerial = async (baud:number, filterSerial: boolean)=>{
   try{
-    const port = await navigator.serial.requestPort({filters})
+    const options = filterSerial?{filters}:undefined
+    const port = await navigator.serial.requestPort(options)
     await port.open({ baudRate: baud })
     return port
   } catch (err) {
@@ -38,6 +37,7 @@ export interface ISerialState {
 export const sendSerial = async (
   gcode: string[], 
   baud: number,
+  filterSerial: boolean,
   onPrinterInfo: (info:string)=>void,
   cb: (state:ISerialState)=>void
 )=>{
@@ -52,13 +52,11 @@ export const sendSerial = async (
   }
 
   try{
-    const port = await connectSerial(baud)
+    const port = await connectSerial(baud,filterSerial)
     const textEncoder = new TextEncoderStream()
     if (port){
       try{
         cb({state:'connecting',progress:0})
-        const writableStreamClosed = textEncoder.readable.pipeTo(port.writable as WritableStream<Uint8Array>)
-        const writer = textEncoder.writable.getWriter()
         const startupReader = port.readable.getReader() as ReadableStreamDefaultReader<Uint8Array>
         const printerInfo = await readStream(startupReader)
         startupReader.releaseLock()
@@ -67,6 +65,8 @@ export const sendSerial = async (
         console.debug(str2ab(printerInfo))
         if (printerInfo.startsWith('start') || printerInfo === '\n'){
           await sleep(2000)
+          const writer = textEncoder.writable.getWriter()
+          const writableStreamClosed = textEncoder.readable.pipeTo(port.writable as WritableStream<Uint8Array>)
           const reader = port.readable.getReader() as ReadableStreamDefaultReader<Uint8Array>
           let lineProgress = 0
           try{
@@ -101,11 +101,16 @@ export const sendSerial = async (
             await writer.close()
             await writableStreamClosed
           }
+        } else {
+          throw new Error(`Wrong printerInfo: ${printerInfo}`)
         }
         //startupReader.releaseLock()
         //await writer.close()
         //await writableStreamClosed
         cb({state:'done',progress:100})
+      } catch (e) {
+        console.warn(e)
+        throw e
       } finally {
         await port.close()
       }
@@ -188,7 +193,7 @@ const readStream = async (
   } catch (error) {
     //
   }
-
+  console.debug(chunks)
   chunks.forEach(arr => {
     stringText += ab2str(arr)
   })
